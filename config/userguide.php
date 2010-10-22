@@ -14,7 +14,7 @@ return array(
 			'name' => 'Pagination',
 
 			// A short description of this module, shown on the index page
-			'description' => 'Official Pagination module, used for creating links for viewing pages of results.',
+			'description' => 'Tool for creating paginated links and viewing pages of results.',
 			
 			// Copyright message, shown in the footer for this module
 			'copyright' => '&copy; 2008–2010 Kohana Team',
