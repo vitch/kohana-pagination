@@ -239,7 +239,7 @@ class Kohana_Pagination {
 			$view = $this->config['view'];
 		}
 
-		if ( ! $view instanceof Kohana_View)
+		if ( ! $view instanceof View)
 		{
 			// Load the view file
 			$view = View::factory($view);
@@ -262,7 +262,7 @@ class Kohana_Pagination {
 	/**
 	 * Returns a Pagination property.
 	 *
-	 * @param   string  URI of the request
+	 * @param   string  property name
 	 * @return  mixed   Pagination property; NULL if not found
 	 */
 	public function __get($key)
