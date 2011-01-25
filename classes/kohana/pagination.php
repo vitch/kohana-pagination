@@ -215,7 +215,7 @@ class Kohana_Pagination {
 	public function valid_page($page)
 	{
 		// Page number has to be a clean integer
-		if ( ! Validate::digit($page))
+		if ( ! Valid::digit($page))
 			return FALSE;
 
 		return $page > 0 AND $page <= $this->total_pages;
