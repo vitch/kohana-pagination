@@ -256,7 +256,15 @@ class Kohana_Pagination {
 	 */
 	public function __toString()
 	{
-		return $this->render();
+		try
+		{
+			return $this->render();
+		}
+		catch(Exception $e)
+		{
+			Kohana_Exception::handler($e);
+			return '';
+		}
 	}
 
 	/**
