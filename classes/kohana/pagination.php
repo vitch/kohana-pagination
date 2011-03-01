@@ -7,10 +7,24 @@
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
+ * 
+ * @method Pagination current_page()
+ * @method Pagination total_items()
+ * @method Pagination items_per_page()
+ * @method Pagination total_pages()
+ * @method Pagination current_first_item()
+ * @method Pagination current_last_item()
+ * @method Pagination previous_page()
+ * @method Pagination next_page()
+ * @method Pagination first_page()
+ * @method Pagination last_page()
+ * @method Pagination offset()
  */
 class Kohana_Pagination {
 
-	// Merged configuration settings
+	/**
+	 * @var array Merged configuration settings
+	 */
 	protected $config = array(
 		'current_page'      => array('source' => 'query_string', 'key' => 'page'),
 		'total_items'       => 0,
@@ -19,39 +33,47 @@ class Kohana_Pagination {
 		'auto_hide'         => TRUE,
 		'first_page_in_url' => FALSE,
 	);
-
+	
+	/**
+	 * @var array Members that have access methods
+	 */
+	protected $_properties = array(
+		'current_page', 'total_items', 'items_per_page', 'total_pages', 'current_first_item', 'current_last_item',
+		'previous_page', 'next_page', 'first_page', 'last_page', 'offset',
+	);
+	
 	// Current page number
-	protected $current_page;
+	protected $_current_page;
 
 	// Total item count
-	protected $total_items;
+	protected $_total_items;
 
 	// How many items to show per page
-	protected $items_per_page;
+	protected $_items_per_page;
 
 	// Total page count
-	protected $total_pages;
+	protected $_total_pages;
 
 	// Item offset for the first item displayed on the current page
-	protected $current_first_item;
+	protected $_current_first_item;
 
 	// Item offset for the last item displayed on the current page
-	protected $current_last_item;
+	protected $_current_last_item;
 
 	// Previous page number; FALSE if the current page is the first one
-	protected $previous_page;
+	protected $_previous_page;
 
 	// Next page number; FALSE if the current page is the last one
-	protected $next_page;
+	protected $_next_page;
 
 	// First page number; FALSE if the current page is the first one
-	protected $first_page;
+	protected $_first_page;
 
 	// Last page number; FALSE if the current page is the last one
-	protected $last_page;
+	protected $_last_page;
 
 	// Query offset
-	protected $offset;
+	protected $_offset;
 
 	/**
 	 * Creates a new Pagination object.
@@ -131,7 +153,7 @@ class Kohana_Pagination {
 		$this->config = $config + $this->config;
 
 		// Only (re)calculate pagination when needed
-		if ($this->current_page === NULL
+		if ($this->_current_page === NULL
 			OR isset($config['current_page'])
 			OR isset($config['total_items'])
 			OR isset($config['items_per_page']))
@@ -140,36 +162,36 @@ class Kohana_Pagination {
 			if ( ! empty($this->config['current_page']['page']))
 			{
 				// The current page number has been set manually
-				$this->current_page = (int) $this->config['current_page']['page'];
+				$this->_current_page = (int) $this->config['current_page']['page'];
 			}
 			else
 			{
 				switch ($this->config['current_page']['source'])
 				{
 					case 'query_string':
-						$this->current_page = isset($_GET[$this->config['current_page']['key']])
+						$this->_current_page = isset($_GET[$this->config['current_page']['key']])
 							? (int) $_GET[$this->config['current_page']['key']]
 							: 1;
 						break;
 
 					case 'route':
-						$this->current_page = (int) Request::current()->param($this->config['current_page']['key'], 1);
+						$this->_current_page = (int) Request::current()->param($this->config['current_page']['key'], 1);
 						break;
 				}
 			}
 
 			// Calculate and clean all pagination variables
-			$this->total_items        = (int) max(0, $this->config['total_items']);
-			$this->items_per_page     = (int) max(1, $this->config['items_per_page']);
-			$this->total_pages        = (int) ceil($this->total_items / $this->items_per_page);
-			$this->current_page       = (int) min(max(1, $this->current_page), max(1, $this->total_pages));
-			$this->current_first_item = (int) min((($this->current_page - 1) * $this->items_per_page) + 1, $this->total_items);
-			$this->current_last_item  = (int) min($this->current_first_item + $this->items_per_page - 1, $this->total_items);
-			$this->previous_page      = ($this->current_page > 1) ? $this->current_page - 1 : FALSE;
-			$this->next_page          = ($this->current_page < $this->total_pages) ? $this->current_page + 1 : FALSE;
-			$this->first_page         = ($this->current_page === 1) ? FALSE : 1;
-			$this->last_page          = ($this->current_page >= $this->total_pages) ? FALSE : $this->total_pages;
-			$this->offset             = (int) (($this->current_page - 1) * $this->items_per_page);
+			$this->_total_items        = (int) max(0, $this->config['total_items']);
+			$this->_items_per_page     = (int) max(1, $this->config['items_per_page']);
+			$this->_total_pages        = (int) ceil($this->_total_items / $this->_items_per_page);
+			$this->_current_page       = (int) min(max(1, $this->_current_page), max(1, $this->_total_pages));
+			$this->_current_first_item = (int) min((($this->_current_page - 1) * $this->_items_per_page) + 1, $this->_total_items);
+			$this->_current_last_item  = (int) min($this->_current_first_item + $this->_items_per_page - 1, $this->_total_items);
+			$this->_previous_page      = ($this->_current_page > 1) ? $this->_current_page - 1 : FALSE;
+			$this->_next_page          = ($this->_current_page < $this->_total_pages) ? $this->_current_page + 1 : FALSE;
+			$this->_first_page         = ($this->_current_page === 1) ? FALSE : 1;
+			$this->_last_page          = ($this->_current_page >= $this->_total_pages) ? FALSE : $this->_total_pages;
+			$this->_offset             = (int) (($this->_current_page - 1) * $this->_items_per_page);
 		}
 
 		// Chainable method
@@ -218,7 +240,7 @@ class Kohana_Pagination {
 		if ( ! Valid::digit($page))
 			return FALSE;
 
-		return $page > 0 AND $page <= $this->total_pages;
+		return $page > 0 AND $page <= $this->_total_pages;
 	}
 
 	/**
@@ -230,7 +252,7 @@ class Kohana_Pagination {
 	public function render($view = NULL)
 	{
 		// Automatically hide pagination whenever it is superfluous
-		if ($this->config['auto_hide'] === TRUE AND $this->total_pages <= 1)
+		if ($this->config['auto_hide'] === TRUE AND $this->_total_pages <= 1)
 			return '';
 
 		if ($view === NULL)
@@ -268,26 +290,46 @@ class Kohana_Pagination {
 	}
 
 	/**
-	 * Returns a Pagination property.
+	 * Handles loading and setting properties.
 	 *
-	 * @param   string  property name
-	 * @return  mixed   Pagination property; NULL if not found
+	 * @param   string  $method Method name
+	 * @param   array   $args   Method arguments
+	 * @return  mixed
 	 */
-	public function __get($key)
+	public function __call($method, array $args)
 	{
-		return isset($this->$key) ? $this->$key : NULL;
+		if (in_array($method, $this->_properties))
+		{
+			if (!count($args))
+			{
+				return $this->{'_'.$method};
+			}
+		}
+		else
+		{
+			throw new Kohana_Exception('Invalid method :method called in :class',
+				array(':method' => $method, ':class' => get_class($this)));
+		}
 	}
 
 	/**
-	 * Updates a single config setting, and recalculates pagination if needed.
+	 * Handles setting of property
 	 *
-	 * @param   string  config key
-	 * @param   mixed   config value
-	 * @return  void
+	 * @param  string $key    Property name
+	 * @param  mixed  $value  Property value
+	 * @return void
 	 */
 	public function __set($key, $value)
 	{
-		$this->setup(array($key => $value));
+		if (isset($this->{'_'.$key}))
+		{
+			$this->setup(array($key => $value));
+		}
+		else
+		{
+			throw new Kohana_Exception('The :property: property does not exist in the :class: class',
+				array(':property:' => $key, ':class:' => get_class($this)));
+		}
 	}
 
 } // End Pagination
