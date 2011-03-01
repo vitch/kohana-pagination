@@ -196,7 +196,7 @@ class Kohana_Pagination {
 		switch ($this->config['current_page']['source'])
 		{
 			case 'query_string':
-				return URL::site(Request::current()->uri).URL::query(array($this->config['current_page']['key'] => $page));
+				return URL::site(Request::current()->uri()).URL::query(array($this->config['current_page']['key'] => $page));
 
 			case 'route':
 				return URL::site(Request::current()->uri(array($this->config['current_page']['key'] => $page))).URL::query();
@@ -215,7 +215,7 @@ class Kohana_Pagination {
 	public function valid_page($page)
 	{
 		// Page number has to be a clean integer
-		if ( ! Validate::digit($page))
+		if ( ! Valid::digit($page))
 			return FALSE;
 
 		return $page > 0 AND $page <= $this->total_pages;
@@ -256,7 +256,15 @@ class Kohana_Pagination {
 	 */
 	public function __toString()
 	{
-		return $this->render();
+		try
+		{
+			return $this->render();
+		}
+		catch(Exception $e)
+		{
+			Kohana_Exception::handler($e);
+			return '';
+		}
 	}
 
 	/**
