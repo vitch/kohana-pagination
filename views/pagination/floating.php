@@ -10,15 +10,15 @@ $count_in = ( ! empty($config['count_in'])) ? (int) $config['count_in'] : 5;
 
 // Beginning group of pages: $n1...$n2
 $n1 = 1;
-$n2 = min($count_out, $total_pages);
+$n2 = min($count_out, $page->total_pages());
 
 // Ending group of pages: $n7...$n8
-$n7 = max(1, $total_pages - $count_out + 1);
-$n8 = $total_pages;
+$n7 = max(1, $page->total_pages() - $count_out + 1);
+$n8 = $page->total_pages();
 
 // Middle group of pages: $n4...$n5
-$n4 = max($n2 + 1, $current_page - $count_in);
-$n5 = min($n7 - 1, $current_page + $count_in);
+$n4 = max($n2 + 1, $page->current_page() - $count_in);
+$n5 = min($n7 - 1, $page->current_page() + $count_in);
 $use_middle = ($n5 >= $n4);
 
 // Point $n3 between $n2 and $n4
@@ -57,21 +57,21 @@ for ($i = $n7; $i <= $n8; $i++)
 ?>
 <p class="pagination">
 
-	<?php if ($first_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($first_page)) ?>" rel="first"><?php echo __('First') ?></a>
+	<?php if ($page->first_page() !== FALSE): ?>
+		<a href="<?php echo HTML::chars($page->url($page->first_page())) ?>" rel="first"><?php echo __('First') ?></a>
 	<?php else: ?>
 		<?php echo __('First') ?>
 	<?php endif ?>
 
-	<?php if ($previous_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($previous_page)) ?>" rel="prev"><?php echo __('Previous') ?></a>
+	<?php if ($page->previous_page() !== FALSE): ?>
+		<a href="<?php echo HTML::chars($page->url($page->previous_page())) ?>" rel="prev"><?php echo __('Previous') ?></a>
 	<?php else: ?>
 		<?php echo __('Previous') ?>
 	<?php endif ?>
 
 	<?php foreach ($links as $number => $content): ?>
 
-		<?php if ($number === $current_page): ?>
+		<?php if ($number === $page->current_page()): ?>
 			<strong><?php echo $content ?></strong>
 		<?php else: ?>
 			<a href="<?php echo HTML::chars($page->url($number)) ?>"><?php echo $content ?></a>
@@ -79,14 +79,14 @@ for ($i = $n7; $i <= $n8; $i++)
 
 	<?php endforeach ?>
 
-	<?php if ($next_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($next_page)) ?>" rel="next"><?php echo __('Next') ?></a>
+	<?php if ($page->next_page() !== FALSE): ?>
+		<a href="<?php echo HTML::chars($page->url($page->next_page())) ?>" rel="next"><?php echo __('Next') ?></a>
 	<?php else: ?>
 		<?php echo __('Next') ?>
 	<?php endif ?>
 
-	<?php if ($last_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($last_page)) ?>" rel="last"><?php echo __('Last') ?></a>
+	<?php if ($page->last_page() !== FALSE): ?>
+		<a href="<?php echo HTML::chars($page->url($page->last_page())) ?>" rel="last"><?php echo __('Last') ?></a>
 	<?php else: ?>
 		<?php echo __('Last') ?>
 	<?php endif ?>
