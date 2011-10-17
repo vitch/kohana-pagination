@@ -111,7 +111,7 @@ class Kohana_Pagination {
 	public function config_group($group = 'default')
 	{
 		// Load the pagination config file
-		$config_file = Kohana::config('pagination');
+		$config_file = Kohana::$config->load('pagination');
 
 		// Initialize the $config array
 		$config['group'] = (string) $group;
@@ -221,7 +221,15 @@ class Kohana_Pagination {
 				return URL::site(Request::current()->uri()).URL::query(array($this->config['current_page']['key'] => $page));
 
 			case 'route':
-				return URL::site(Request::current()->uri(array($this->config['current_page']['key'] => $page))).URL::query();
+				return Route::url(
+					Route::name(Request::current()->route()),
+					array(
+						$this->config['current_page']['key'] => $page,
+						'controller' => Request::current()->controller(),
+						'action' => Request::current()->action(),
+						'directory' => Request::current()->directory(),
+					) + Request::current()->param()
+				) . URL::query();
 		}
 
 		return '#';
